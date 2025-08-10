@@ -1,0 +1,14 @@
+/* styles/logs.css */
+.logs-container {
+    background-color: #f8f9fa; /* Dark background */
+    font-family: 'Courier New', Courier, monospace;
+    padding: 15px;
+    border-radius: 5px;
+    max-height: 500px;
+    overflow-y: auto;
+    white-space: pre-wrap;     /* Wrap long lines */
+    word-wrap: break-word;     /* Break words if necessary */
+    font-size: 0.875em;
+    margin-top: 1rem;
+    border: 1px solid #495057;
+}

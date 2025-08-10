@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv
+pip-selfcheck.json
+
+# Flask
+instance/
+.webassets-cache
+
+# Logs
+logs/
+
+# Test environment
+temp_test_env/
+
+# IDE / Editor
+.idea/
+.vscode/
+*.swp
+.ropeproject
+
+# uv files
+uv.lock
+
+# Local environment
+.env

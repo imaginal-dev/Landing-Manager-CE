@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Landings Manager{% endblock %}
+
+{% block content %}
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('main.index') }}">Landings Manager</a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('main.logout') }}">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>Dashboard</h2>
+            <form action="{{ url_for('main.scan_landings') }}" method="post" class="form-inline">
+                <button type="submit" class="btn btn-primary">Scan for New Landings</button>
+            </form>
+        </div>
+
+        <div id="flash-messages">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Managed Landings</h5>
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Domain</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for landing in landings %}
+                        <tr>
+                            <td>{{ landing.domain }}</td>
+                            <td>
+                                {% if landing.status == 'Active' %}
+                                    <span class="badge badge-success">Active</span>
+                                {% elif landing.status == 'Maintenance' %}
+                                    <span class="badge badge-warning">Maintenance</span>
+                                {% elif landing.status == 'Configured (Inactive)' %}
+                                    <span class="badge badge-secondary">Configured (Inactive)</span>
+                                {% else %}
+                                    <span class="badge badge-info">{{ landing.status }}</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if landing.status == 'Active' %}
+                                    <form action="{{ url_for('main.disable_landing', domain=landing.domain) }}" method="post" style="display: inline;">
+                                        <button type="submit" class="btn btn-warning btn-sm">Disable</button>
+                                    </form>
+                                {% elif landing.status == 'Maintenance' %}
+                                    <form action="{{ url_for('main.enable_landing', domain=landing.domain) }}" method="post" style="display: inline;">
+                                        <button type="submit" class="btn btn-success btn-sm">Enable</button>
+                                    </form>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="3" class="text-center">No landings found. Run a scan to discover new ones.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Log Viewer Section -->
+        <div class="mt-4">
+            <button id="toggle-logs-btn" class="btn btn-secondary">Show Logs</button>
+            <div id="logs-viewer" class="logs-container" style="display: none;">
+                <pre id="logs-content">Logs will appear here...</pre>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/logs.js') }}"></script>
+{% endblock %}

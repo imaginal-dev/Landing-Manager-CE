@@ -1,0 +1,37 @@
+# landings-manager.service.template
+#
+# Systemd service file for the Landings Manager application.
+#
+# To use:
+# 1. Replace the placeholders: {{USER}}, {{GROUP}}, {{PROJECT_PATH}}, {{SOCKET_PATH}}
+# 2. Copy this file to: /etc/systemd/system/landings-manager.service
+# 3. Run:
+#    - sudo systemctl daemon-reload
+#    - sudo systemctl start landings-manager
+#    - sudo systemctl enable landings-manager (to start on boot)
+#
+
+[Unit]
+Description=Gunicorn instance to serve Landings Manager
+After=network.target
+
+[Service]
+# User and Group that will run the process
+User={{USER}}
+Group={{GROUP}}
+
+# The directory from which the service is run
+WorkingDirectory={{PROJECT_PATH}}
+
+# Load environment variables from the .env file
+EnvironmentFile={{PROJECT_PATH}}/.env
+
+# The command to start the service
+# It uses the gunicorn executable from the project's virtual environment
+ExecStart={{PROJECT_PATH}}/.venv/bin/gunicorn --workers 3 --bind unix:{{SOCKET_PATH}} run:app
+
+# Restart the service if it fails
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
